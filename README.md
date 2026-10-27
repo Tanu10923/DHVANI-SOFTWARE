@@ -1,79 +1,339 @@
-# DHVANI – Mind-to-Voice
-Developer: **T.T.S**
+# 🧠 DHVANI – Mind-to-Voice
 
-A limited-command EEG classification assistive-communication prototype (YES / NO / WATER / HELP).
-It is **not** unrestricted mind reading. A model trained on one person's EEG may not generalise to another person.
+### From Your Thoughts to Voice
 
-Pipeline: `BioAmp EXG -> Arduino UNO R4 Minima -> USB Serial -> backend (preprocess -> 2 s window -> features -> model) -> translation -> browser voice`
+**DHVANI** is a low-cost, offline, laptop-based EEG assistive-communication prototype that converts brain-signal patterns into predefined Hindi voice commands.
 
-## Layout
-- `firmware/dhvani_eeg/dhvani_eeg.ino` - Arduino IDE sketch (separate from the app)
-- `backend/` - FastAPI + Python: `pipeline.py` (shared by training AND live), `model_service.py`, `app.py` (serial, WebSocket, REST)
-- `frontend/index.html` - UI (served by the backend at http://localhost:8000). Set `window.DHVANI_API` to use another backend URL.
+**Developer:** T.T.S
 
-## Hardware and Arduino IDE
-1. BioAmp EXG Pill / EEG hardware per Upside Down Labs docs (electrode placement, power, battery use are YOUR configuration; verify against their guide).
-2. Connect each BioAmp OUT to an analog pin. Firmware default: channel 1 = A0, channel 2 = A1 (**configuration point, check your wiring**), common GND.
-3. Arduino IDE -> Boards Manager -> install "Arduino UNO R4 Boards" -> select UNO R4 Minima -> open the .ino -> Upload.
-4. Edit `NUM_CHANNELS`, `SAMPLE_RATE`, `BAUD` if needed; they must match DHVANI Settings. Close Serial Monitor/Plotter before using DHVANI (only one program can own the port).
-5. Serial format: `value1,value2\n` per sample, 115200 baud, no other text.
+---
 
-The live waveform display uses a streaming 0.5–40 Hz band-pass and 50 Hz mains notch filter. Recordings remain raw ADC samples; training and prediction apply the shared offline preprocessing pipeline (DC removal, band-pass, notch, and per-channel z-score) to keep model inputs consistent.
+## 📸 Project Overview
 
-## Run
+![DHVANI Mind-to-Voice](assets/dhvani-overview.png.jpg)
+
+---
+
+## 💡 About the Project
+
+DHVANI combines **EEG signal acquisition, signal processing, machine learning, and voice output** to create a simple communication system.
+
+The system recognizes a set of predefined mental commands such as:
+
+- ✅ YES
+- ❌ NO
+- 💧 WATER
+- 🆘 HELP
+
+The recognized command is converted into **Hindi voice output**, providing an accessible communication interface.
+
+---
+
+## ⭐ Key Features
+
+- 🧠 EEG signal acquisition using BioAmp EXG
+- 🔌 Arduino UNO R4 Minima integration
+- ⚡ Real-time signal processing
+- 🤖 Machine Learning-based command classification
+- 🗣️ Hindi voice output
+- 💻 Offline laptop-based operation
+- 🎯 Simple predefined command system
+- 📊 EEG waveform monitoring
+- 💾 Recording and dataset management
+- 🔄 Live prediction and voice generation
+- 🌐 User-friendly web interface
+- 🤝 Designed to support accessible communication
+
+---
+
+## 🔗 System Pipeline
+
+```text
+BioAmp EXG
+     ↓
+EEG Signal
+     ↓
+Arduino UNO R4 Minima
+     ↓
+USB Serial – 115200 Baud
+     ↓
+Python Backend
+     ↓
+Signal Preprocessing
+     ↓
+2-Second Window
+     ↓
+Feature Extraction
+     ↓
+Machine Learning Model
+     ↓
+Command Mapping
+     ↓
+Hindi Voice Output
 ```
-cd backend
-python -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
+
+---
+
+## 🛠️ Technology Stack
+
+### Hardware
+
+- BioAmp EXG
+- EEG Electrodes
+- Arduino UNO R4 Minima
+- USB Connection
+
+### Software
+
+- Python
+- FastAPI
+- NumPy
+- SciPy
+- Scikit-learn
+- Joblib
+- PySerial
+- Pydantic
+- HTML
+- CSS
+- JavaScript
+- WebSocket
+- REST API
+
+### Machine Learning
+
+DHVANI uses a **Random Forest classification model** for recognizing predefined EEG command patterns.
+
+---
+
+## 📂 Project Structure
+
+```text
+DHVANI SOFTWARE/
+│
+├── dhvani_eeg/
+│   └── dhvani_eeg.ino
+│
+├── backend/
+│   ├── app.py
+│   ├── model_service.py
+│   └── pipeline.py
+│
+├── data/
+│   └── recordings/
+│
+├── models/
+│   └── prod/
+│
+├── frontend/
+│   └── index.html
+│
+├── assets/
+│   └── dhvani-overview.png
+│
+├── README.md
+└── .gitignore
+```
+
+---
+
+## ⚙️ How It Works
+
+### 1. EEG Signal Acquisition
+
+The BioAmp EXG captures EEG signals through the connected electrodes.
+
+### 2. Arduino Processing
+
+The Arduino UNO R4 Minima receives the analog signal and sends the data to the computer through USB serial communication.
+
+### 3. Signal Processing
+
+The backend processes the incoming EEG data using:
+
+- DC removal
+- 0.5–40 Hz band-pass filtering
+- 50 Hz notch filtering
+- Per-channel normalization
+
+### 4. Feature Extraction
+
+The system creates features from the processed EEG signal using statistical measurements and frequency-band information.
+
+### 5. Machine Learning
+
+A Random Forest model classifies the processed signal into one of the predefined commands.
+
+### 6. Voice Output
+
+The recognized command is mapped to Hindi speech and played through the browser.
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/YOUR-USERNAME/DHVANI.git
+cd DHVANI
+```
+
+### 2. Create Virtual Environment
+
+```bash
+python -m venv .venv
+```
+
+### Windows
+
+```bash
+.venv\Scripts\activate
+```
+
+### 3. Install Dependencies
+
+```bash
 pip install -r requirements.txt
+```
+
+### 4. Start the Backend
+
+```bash
 uvicorn app:app --port 8000
 ```
-Open http://localhost:8000.
 
-<!-- cd "C:\Users\user\OneDrive\Desktop\DHVANI SOFTWARE"
+### 5. Open the Application
 
-# Agar .venv pehle se hai, yeh step chhod sakte hain
-py -m venv .venv
+Open:
 
-.\.venv\Scripts\Activate.ps1
-
-python -m pip install fastapi "uvicorn[standard]" numpy scipy scikit-learn joblib pyserial pydantic
-
-python -m uvicorn app:app --host 127.0.0.1 --port 8000 -->
-
-## AI Assistant
-The Assistant answers open-ended questions using the visible browser page, recent chat, live DHVANI status, and the model's general knowledge. It requires an OpenAI API key, which is read only by the backend and must not be placed in `index.html`.
-
-Set the key in the same terminal before starting Uvicorn:
+```text
+http://localhost:8000
 ```
-# PowerShell
+
+---
+
+## 🔧 Hardware Setup
+
+1. Connect the BioAmp EXG hardware.
+2. Connect BioAmp output channels to the configured Arduino analog pins.
+3. Connect Arduino UNO R4 Minima to the laptop through USB.
+4. Upload the DHVANI Arduino firmware.
+5. Select the correct serial port in DHVANI Settings.
+6. Configure baud rate, channels, and sampling rate.
+7. Start EEG monitoring.
+
+The default serial communication uses:
+
+```text
+Baud Rate: 115200
+```
+
+---
+
+## 🤖 AI Model Workflow
+
+```text
+Settings
+   ↓
+EEG Monitor
+   ↓
+Record Commands
+   ↓
+Prepare Dataset
+   ↓
+Train Model
+   ↓
+Evaluate Model
+   ↓
+Start Live Prediction
+   ↓
+Hindi Voice Output
+```
+
+Recordings are stored with command labels and metadata, allowing the system to build and train a personalized classification model.
+
+---
+
+## 🎙️ Supported Commands
+
+| Command | Voice Output |
+|---|---|
+| YES | हाँ |
+| NO | नहीं |
+| WATER | पानी |
+| HELP | मदद |
+
+---
+
+## 🤖 AI Assistant
+
+DHVANI also provides an optional AI Assistant that can interact with the visible application page, recent conversation, and live DHVANI status.
+
+The AI Assistant can be configured using an OpenAI API key through the backend environment.
+
+```powershell
 $env:OPENAI_API_KEY="your-api-key"
-$env:OPENAI_MODEL="gpt-4o-mini"  # optional; defaults to gpt-4o-mini
+$env:OPENAI_MODEL="gpt-4o-mini"
+```
+
+Then start the backend:
+
+```bash
 uvicorn app:app --port 8000
 ```
-If the key is not configured, the assistant reports that setup is required. The page text and recent conversation are sent to OpenAI when a question is asked.
 
-## Workflow
-1. **Settings**: choose port, baud, channels, sampling rate, then **EEG Monitor -> Connect**.
-2. **Recordings**: pick a command, countdown -> record -> auto-save `YES_01.csv` etc. to `backend/data/prod/recordings/` (+ JSON metadata: label, id, time, duration, fs, channels, samples, device). Record at least 2 per command (more is better).
-3. **AI Model -> Prepare + Train + Evaluate**: preprocessing (DC removal, 0.5-40 Hz band-pass, 50 Hz notch, z-score), 2 s windows (1 s hop), features (stats + band powers, fixed order), RandomForest. The last recording of each command is held out for testing, so metrics are not inflated by window leakage. The final model is refit on all data and saved to `backend/models/prod/model.joblib`.
-4. **Live Mind-to-Voice -> Start live prediction**. A full 2-second window is needed for the first prediction; after that, predictions update every 1 second. The browser speaks only after the configured number of stable, above-threshold windows (default: 2), so a stable command normally takes about 3 seconds from start to confirm. Low-confidence results stay silent; cooldown prevents repeated speech (Settings).
+---
 
-## Demo vs Production
-Demo uses simulated waveform/predictions, every one marked SIMULATED, stored under `demo:*`. Production uses only real serial data and a real model, stored under `prod:*`. The app never switches modes automatically. "Clear data" affects only the current mode.
+## 📊 Demo & Production
 
-## Status honesty
-Software Ready: yes. Hardware Tested: **no** until you have run it on real hardware. The signal-quality indicator is a heuristic (flat/saturated detection), not EEG validation.
+DHVANI supports two operating modes:
 
-## Troubleshooting
-- *Backend unavailable*: start uvicorn; check port 8000.
-- *Serial connection failed on Windows*: select the Arduino's USB serial port in **Settings**; do not select a `Standard Serial over Bluetooth link` port. Use a data-capable USB cable, install the UNO R4 board driver via Arduino IDE if needed, and refresh the port list. Close Arduino IDE Serial Monitor/Plotter and any other serial terminal before connecting because only one app can own a COM port at a time. If Windows reports `Access is denied`, also close any other DHVANI backend window/process and retry.
-- *Serial connection failed on Linux*: check the USB cable/port, close Arduino Serial Monitor/Plotter, and add the user to `dialout` if needed.
-- *Many invalid lines*: baud/channels/delimiter mismatch with firmware.
-- *No signal / flat line*: check electrodes, BioAmp power, wiring to A0/A1.
-- *Model Not Trained / training error*: record every command, at least 2 recordings each, at the same fs/channels as current Settings.
-- *Voice unavailable*: use Chrome/Edge and install a system voice for the chosen language.
+### 🧪 Demo Mode
 
-## Future
-All hardware code is in `EEGService` (app.py). A Raspberry Pi reader (e.g. SPI ADC) can replace it without frontend changes.
-## Not yet done
-Vite/React split, backend unit tests, mains-frequency auto-detect, multi-user datasets, WebSocket-based training progress.
+- Simulated EEG waveform
+- Simulated predictions
+- Useful for software demonstration and testing
+
+### ⚡ Production Mode
+
+- Real EEG/serial data
+- Real trained ML model
+- Live command prediction
+- Hindi voice output
+
+---
+
+## 🌱 Future Scope
+
+DHVANI can be further developed with:
+
+- 📱 Mobile application support
+- 🌐 More language support
+- 🧠 Additional communication commands
+- 🎯 Improved signal classification
+- 🍓 Raspberry Pi-based hardware integration
+- 👥 Multi-user model support
+- 📈 Advanced EEG analytics
+- 🔊 More customizable voice output
+
+---
+
+## 🌍 Impact
+
+DHVANI aims to explore how **brain-signal technology and AI can support accessible communication**.
+
+By combining affordable hardware with an offline software system, the project provides a practical platform for experimenting with EEG-based assistive communication.
+
+### 💙 Affordable • Offline • Accessible • AI-Powered
+
+---
+
+## 👨‍💻 Developer
+
+**T.T.S**
+
+### DHVANI – Mind-to-Voice
+
+> **“From Your Thoughts to Voice.”**
+
+---
