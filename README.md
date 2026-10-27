@@ -260,8 +260,6 @@ Recordings are stored with command labels and metadata, allowing the system to b
 |---|---|
 | YES | हाँ |
 | NO | नहीं |
-| WATER | पानी |
-| HELP | मदद |
 
 ---
 
