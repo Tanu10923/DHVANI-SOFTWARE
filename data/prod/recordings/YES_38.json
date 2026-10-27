@@ -1,0 +1,15 @@
+{
+ "label": "YES",
+ "recording_id": "YES_38",
+ "datetime": "2026-10-25 22:35:58",
+ "duration_s": 8.044,
+ "sampling_rate": 250,
+ "channels": 2,
+ "samples": 2011,
+ "device": {
+  "port": "COM5",
+  "baud": 115200,
+  "board": "Arduino UNO R4 Minima"
+ },
+ "mode": "prod"
+}

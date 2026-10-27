@@ -1,0 +1,15 @@
+{
+ "label": "NO",
+ "recording_id": "NO_01",
+ "datetime": "2026-10-25 08:59:55",
+ "duration_s": 4.044,
+ "sampling_rate": 250,
+ "channels": 2,
+ "samples": 1011,
+ "device": {
+  "port": "COM5",
+  "baud": 115200,
+  "board": "Arduino UNO R4 Minima"
+ },
+ "mode": "prod"
+}
